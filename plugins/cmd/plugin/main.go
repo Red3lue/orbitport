@@ -16,6 +16,7 @@ import (
 	"github.com/spacecomputer-io/orbitport/plugins/pkg/plugin/ipfs"
 	"github.com/spacecomputer-io/orbitport/plugins/pkg/plugin/kms"
 	"github.com/spacecomputer-io/orbitport/plugins/pkg/plugin/masterseed"
+	"github.com/spacecomputer-io/orbitport/plugins/pkg/plugin/orbitalimager"
 	"github.com/spacecomputer-io/orbitport/plugins/pkg/utils"
 	proto "github.com/spacecomputer-io/orbitport/plugins/proto/plugins"
 )
@@ -110,6 +111,13 @@ func main() {
 		}
 		proto.RegisterKmsPluginServer(grpcServer, plugin)
 		logger.Info("KMS plugin ready")
+	case "orbitalimager":
+		plugin, err := orbitalimager.NewPlugin()
+		if err != nil {
+			panic(err)
+		}
+		proto.RegisterOrbitalImagerPluginServer(grpcServer, plugin)
+		logger.Info("OrbitalImager plugin ready")
 	default:
 		panic("unknown plugin")
 	}

@@ -218,6 +218,26 @@ services:
       - ORBITPORT_GRPC_PORT=50000
       # Dev compose intentionally runs the noop auth plugin.
 
+  plugin-orbitalimager:
+    <<: *plugin-base
+    container_name: plugin-orbitalimager
+    build:
+      context: ./plugins
+    image: op-plugin:latest
+    environment:
+      - GOLOG_LOG_LEVEL=debug
+      - ORBITPORT_PLUGIN=orbitalimager
+      - ORBITPORT_GRPC_PORT=50005
+      - ORBITPORT_ORBITALIMAGER_SENSOR=phare-mock-1
+      - ORBITPORT_ORBITALIMAGER_FIXTURE_PATH=/fixtures/test-tanker-0.webp
+    volumes:
+      # Bind-mount the demo fixture from the parent ethPrague repo. Path is
+      # relative to this compose file (orbitport/), so it resolves to
+      # ethPrague/test-tanker-0.webp.
+      - ../test-tanker-0.webp:/fixtures/test-tanker-0.webp:ro
+    ports:
+      - 9005:9000
+
   ipfs-node:
     image: ipfs/kubo:release
     ports:
@@ -229,11 +249,15 @@ services:
     command: ["daemon", "--migrate=true"]
 
   gateway:
-    container_name: gateway 
+    container_name: gateway
     image: op-gateway:latest
     build:
       context: .
       dockerfile: gateway/Dockerfile
+      args:
+        # Compile in the generic plugin.Call dispatcher so out-of-tree
+        # plugins (e.g. orbitalimager) are reachable without typed handlers.
+        CARGO_FEATURES: reflection
     logging:
       driver: "json-file"
       options:
@@ -246,6 +270,7 @@ services:
       - ORBITPORT_PLUGIN_KMS=http://plugin-kms:50004
       - ORBITPORT_PLUGIN_TRNG=http://plugin-aptos-orbital:50001
       - ORBITPORT_PLUGIN_MASTERSEED=http://plugin-masterseed:50003
+      - ORBITPORT_PLUGIN_ORBITALIMAGER=http://plugin-orbitalimager:50005
     ports:
       - 8080:8080
     healthcheck:
@@ -258,6 +283,7 @@ services:
       - plugin-auth
       - plugin-kms
       - plugin-masterseed
+      - plugin-orbitalimager
 
   plugin-beacon:
     <<: *plugin-base

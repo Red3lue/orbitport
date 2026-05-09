@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "github.com/spacecomputer-io/orbitport/plugins/proto";
+
+package orbitalimager;
+
+// OrbitalImagerPlugin is Phare's Orbitport Application Plugin.
+//
+// v0.0.1 surface: a single unary RPC that returns an entire fixture image
+// base64-encoded inside the response message. Mocked backing per
+service OrbitalImagerPlugin {
+  rpc RequestImagery(ImageryRequest) returns (ImageryResult);
+}
+
+message ImageryRequest {
+  double lat            = 1;
+  double lon            = 2;
+  int64  timestamp_unix = 3;
+  uint64 imo            = 4;
+}
+
+message ImageryResult {
+  string image_b64   = 1;  // entire image, base64-encoded
+  string mime_type   = 2;  // "image/jpeg" | "image/png"
+  int64  captured_at = 3;  // server-clock Unix seconds
+  string sensor      = 4;  // free-form sensor identifier
+  bytes  image_hash  = 5;  // keccak256(decoded bytes)
+  bool   mocked      = 6;  // always true while satellite tasking is fixture-keyed
+}
