@@ -229,12 +229,22 @@ services:
       - ORBITPORT_PLUGIN=orbitalimager
       - ORBITPORT_GRPC_PORT=50005
       - ORBITPORT_ORBITALIMAGER_SENSOR=phare-mock-1
-      - ORBITPORT_ORBITALIMAGER_FIXTURE_PATH=/fixtures/test-tanker-0.webp
+      # PNG fixture so the v0.1.0 fragmenter (stdlib decoders only:
+      # png/jpeg/gif) accepts it. Anything outside SupportedExtensions is
+      # logged and skipped at boot — RequestImagery (v0.0.1) still serves
+      # the file unchanged, but ListImages will return empty because no
+      # metadata.json/packets get written.
+      - ORBITPORT_ORBITALIMAGER_FIXTURE_PATH=/fixtures/orbital/tanker-0.png
+      - ORBITPORT_ORBITALIMAGER_FRAGMENT_OUTPUT_DIR=/var/cache/orbitalimager/images
+      - ORBITPORT_ORBITALIMAGER_FRAGMENT_TILE_PIXEL_SIZE=256
     volumes:
-      # Bind-mount the demo fixture from the parent ethPrague repo. Path is
-      # relative to this compose file (orbitport/), so it resolves to
-      # ethPrague/test-tanker-0.webp.
-      - ../test-tanker-0.webp:/fixtures/test-tanker-0.webp:ro
+      # In-tree fixture directory. Add more PNG/JPEG/GIF files here and
+      # point ORBITPORT_ORBITALIMAGER_FIXTURE_PATH at them.
+      - ./fixtures/orbital:/fixtures/orbital:ro
+      # Surface the fragmenter's output on the host so packets and
+      # metadata.json are inspectable with `tree .orbitalimager-state`
+      # from the orbitport/ directory, not just via RPC.
+      - ./.orbitalimager-state:/var/cache/orbitalimager/images
     ports:
       - 9005:9000
 

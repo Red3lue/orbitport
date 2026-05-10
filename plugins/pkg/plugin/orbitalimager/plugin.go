@@ -32,6 +32,11 @@ type Plugin struct {
 	mimeType   string
 	imageHash  []byte
 	sensor     string
+
+	// fragmentDir is the on-disk parent directory containing per-image
+	// subfolders produced by the fragmenter. Read by the v0.1.0 RPCs
+	// (ListImages / GetImageMetadata / GetImagePacket).
+	fragmentDir string
 }
 
 // NewPlugin creates a new orbitalimager plugin instance and pre-loads the
@@ -58,10 +63,11 @@ func NewPlugin() (*Plugin, error) {
 	}
 
 	return &Plugin{
-		imageBytes: imgBytes,
-		mimeType:   mime,
-		imageHash:  hash,
-		sensor:     cfg.Sensor,
+		imageBytes:  imgBytes,
+		mimeType:    mime,
+		imageHash:   hash,
+		sensor:      cfg.Sensor,
+		fragmentDir: cfg.FragmentOutputDir,
 	}, nil
 }
 

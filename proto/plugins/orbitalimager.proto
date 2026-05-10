@@ -7,10 +7,22 @@ package orbitalimager;
 // OrbitalImagerPlugin is Phare's Orbitport Application Plugin.
 //
 // v0.0.1 surface: a single unary RPC that returns an entire fixture image
-// base64-encoded inside the response message. Mocked backing per
+// base64-encoded inside the response message.
+//
+// v0.1.0 adds three read-only RPCs over the on-disk fragmentation produced
+// by the plugin at boot:
+//   ListImages       — list fragmented images by image_id
+//   GetImageMetadata — return the metadata.json for one image as a typed message
+//   GetImagePacket   — return one packet, base64-encoded (same wire shape as
+//                      ImageryResult.image_b64)
 service OrbitalImagerPlugin {
-  rpc RequestImagery(ImageryRequest) returns (ImageryResult);
+  rpc RequestImagery   (ImageryRequest)         returns (ImageryResult);
+  rpc ListImages       (ListImagesRequest)      returns (ListImagesResult);
+  rpc GetImageMetadata (GetImageMetadataRequest) returns (ImageMetadata);
+  rpc GetImagePacket   (GetImagePacketRequest)   returns (GetImagePacketResult);
 }
+
+// ── v0.0.1 messages ─────────────────────────────────────────────────────────
 
 message ImageryRequest {
   double lat            = 1;
@@ -26,4 +38,68 @@ message ImageryResult {
   string sensor      = 4;  // free-form sensor identifier
   bytes  image_hash  = 5;  // keccak256(decoded bytes)
   bool   mocked      = 6;  // always true while satellite tasking is fixture-keyed
+}
+
+// ── v0.1.0 messages ─────────────────────────────────────────────────────────
+
+message ListImagesRequest {}
+
+message ListImagesResult {
+  // image_id values, sorted lexicographically. Each id can be passed to
+  // GetImageMetadata or GetImagePacket. Empty if no images are fragmented.
+  repeated string image_ids = 1;
+}
+
+message GetImageMetadataRequest {
+  string image_id = 1;
+}
+
+// PacketInfo describes one tile produced by the fragmenter. Mirrors the
+// per-packet entries in metadata.json on disk.
+message PacketInfo {
+  uint32 index       = 1;
+  string filename    = 2;
+  uint32 row         = 3;
+  uint32 col         = 4;
+  uint32 width       = 5;
+  uint32 height      = 6;
+  bytes  packet_hash = 7;  // keccak256 of the packet file bytes
+}
+
+// ImageMetadata is the typed mirror of metadata.json. Field semantics are
+// 1:1 with the on-disk schema; hex hashes on disk become raw 32-byte
+// `bytes` here so typed clients don't have to hex-decode.
+message ImageMetadata {
+  string version            = 1;
+  string image_id           = 2;
+  string ship_name          = 3;
+  uint64 imo                = 4;
+  string source_filename    = 5;
+  string source_mime_type   = 6;
+  string source_extension   = 7;
+  uint32 image_width        = 8;
+  uint32 image_height       = 9;
+  uint32 tile_pixel_size    = 10;
+  uint32 tile_rows          = 11;
+  uint32 tile_cols          = 12;
+  uint32 packet_count       = 13;
+  string packet_extension   = 14;
+  bytes  full_image_hash    = 15;  // keccak256(source bytes)
+  int64  created_at_unix    = 16;
+  string sensor             = 17;
+  repeated PacketInfo packets = 18;
+}
+
+message GetImagePacketRequest {
+  string image_id     = 1;
+  uint32 packet_index = 2;
+}
+
+message GetImagePacketResult {
+  uint32 packet_index = 1;
+  string packet_b64   = 2;  // base64-encoded packet file (same shape as ImageryResult.image_b64)
+  bytes  packet_hash  = 3;  // keccak256 of the decoded bytes
+  uint32 width        = 4;
+  uint32 height       = 5;
+  string mime_type    = 6;  // "image/png" for v0.1.0
 }

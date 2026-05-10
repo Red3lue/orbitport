@@ -8,7 +8,6 @@ package proto
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,7 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrbitalImagerPlugin_RequestImagery_FullMethodName = "/orbitalimager.OrbitalImagerPlugin/RequestImagery"
+	OrbitalImagerPlugin_RequestImagery_FullMethodName   = "/orbitalimager.OrbitalImagerPlugin/RequestImagery"
+	OrbitalImagerPlugin_ListImages_FullMethodName       = "/orbitalimager.OrbitalImagerPlugin/ListImages"
+	OrbitalImagerPlugin_GetImageMetadata_FullMethodName = "/orbitalimager.OrbitalImagerPlugin/GetImageMetadata"
+	OrbitalImagerPlugin_GetImagePacket_FullMethodName   = "/orbitalimager.OrbitalImagerPlugin/GetImagePacket"
 )
 
 // OrbitalImagerPluginClient is the client API for OrbitalImagerPlugin service.
@@ -30,9 +32,20 @@ const (
 // OrbitalImagerPlugin is Phare's Orbitport Application Plugin.
 //
 // v0.0.1 surface: a single unary RPC that returns an entire fixture image
-// base64-encoded inside the response message. Mocked backing per
+// base64-encoded inside the response message.
+//
+// v0.1.0 adds three read-only RPCs over the on-disk fragmentation produced
+// by the plugin at boot:
+//
+//	ListImages       — list fragmented images by image_id
+//	GetImageMetadata — return the metadata.json for one image as a typed message
+//	GetImagePacket   — return one packet, base64-encoded (same wire shape as
+//	                   ImageryResult.image_b64)
 type OrbitalImagerPluginClient interface {
 	RequestImagery(ctx context.Context, in *ImageryRequest, opts ...grpc.CallOption) (*ImageryResult, error)
+	ListImages(ctx context.Context, in *ListImagesRequest, opts ...grpc.CallOption) (*ListImagesResult, error)
+	GetImageMetadata(ctx context.Context, in *GetImageMetadataRequest, opts ...grpc.CallOption) (*ImageMetadata, error)
+	GetImagePacket(ctx context.Context, in *GetImagePacketRequest, opts ...grpc.CallOption) (*GetImagePacketResult, error)
 }
 
 type orbitalImagerPluginClient struct {
@@ -53,6 +66,36 @@ func (c *orbitalImagerPluginClient) RequestImagery(ctx context.Context, in *Imag
 	return out, nil
 }
 
+func (c *orbitalImagerPluginClient) ListImages(ctx context.Context, in *ListImagesRequest, opts ...grpc.CallOption) (*ListImagesResult, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListImagesResult)
+	err := c.cc.Invoke(ctx, OrbitalImagerPlugin_ListImages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orbitalImagerPluginClient) GetImageMetadata(ctx context.Context, in *GetImageMetadataRequest, opts ...grpc.CallOption) (*ImageMetadata, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImageMetadata)
+	err := c.cc.Invoke(ctx, OrbitalImagerPlugin_GetImageMetadata_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orbitalImagerPluginClient) GetImagePacket(ctx context.Context, in *GetImagePacketRequest, opts ...grpc.CallOption) (*GetImagePacketResult, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetImagePacketResult)
+	err := c.cc.Invoke(ctx, OrbitalImagerPlugin_GetImagePacket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrbitalImagerPluginServer is the server API for OrbitalImagerPlugin service.
 // All implementations must embed UnimplementedOrbitalImagerPluginServer
 // for forward compatibility.
@@ -61,8 +104,19 @@ func (c *orbitalImagerPluginClient) RequestImagery(ctx context.Context, in *Imag
 //
 // v0.0.1 surface: a single unary RPC that returns an entire fixture image
 // base64-encoded inside the response message.
+//
+// v0.1.0 adds three read-only RPCs over the on-disk fragmentation produced
+// by the plugin at boot:
+//
+//	ListImages       — list fragmented images by image_id
+//	GetImageMetadata — return the metadata.json for one image as a typed message
+//	GetImagePacket   — return one packet, base64-encoded (same wire shape as
+//	                   ImageryResult.image_b64)
 type OrbitalImagerPluginServer interface {
 	RequestImagery(context.Context, *ImageryRequest) (*ImageryResult, error)
+	ListImages(context.Context, *ListImagesRequest) (*ListImagesResult, error)
+	GetImageMetadata(context.Context, *GetImageMetadataRequest) (*ImageMetadata, error)
+	GetImagePacket(context.Context, *GetImagePacketRequest) (*GetImagePacketResult, error)
 	mustEmbedUnimplementedOrbitalImagerPluginServer()
 }
 
@@ -75,6 +129,15 @@ type UnimplementedOrbitalImagerPluginServer struct{}
 
 func (UnimplementedOrbitalImagerPluginServer) RequestImagery(context.Context, *ImageryRequest) (*ImageryResult, error) {
 	return nil, status.Error(codes.Unimplemented, "method RequestImagery not implemented")
+}
+func (UnimplementedOrbitalImagerPluginServer) ListImages(context.Context, *ListImagesRequest) (*ListImagesResult, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListImages not implemented")
+}
+func (UnimplementedOrbitalImagerPluginServer) GetImageMetadata(context.Context, *GetImageMetadataRequest) (*ImageMetadata, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetImageMetadata not implemented")
+}
+func (UnimplementedOrbitalImagerPluginServer) GetImagePacket(context.Context, *GetImagePacketRequest) (*GetImagePacketResult, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetImagePacket not implemented")
 }
 func (UnimplementedOrbitalImagerPluginServer) mustEmbedUnimplementedOrbitalImagerPluginServer() {}
 func (UnimplementedOrbitalImagerPluginServer) testEmbeddedByValue()                             {}
@@ -115,6 +178,60 @@ func _OrbitalImagerPlugin_RequestImagery_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrbitalImagerPlugin_ListImages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListImagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrbitalImagerPluginServer).ListImages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrbitalImagerPlugin_ListImages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrbitalImagerPluginServer).ListImages(ctx, req.(*ListImagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrbitalImagerPlugin_GetImageMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImageMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrbitalImagerPluginServer).GetImageMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrbitalImagerPlugin_GetImageMetadata_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrbitalImagerPluginServer).GetImageMetadata(ctx, req.(*GetImageMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrbitalImagerPlugin_GetImagePacket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImagePacketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrbitalImagerPluginServer).GetImagePacket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrbitalImagerPlugin_GetImagePacket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrbitalImagerPluginServer).GetImagePacket(ctx, req.(*GetImagePacketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrbitalImagerPlugin_ServiceDesc is the grpc.ServiceDesc for OrbitalImagerPlugin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -125,6 +242,18 @@ var OrbitalImagerPlugin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestImagery",
 			Handler:    _OrbitalImagerPlugin_RequestImagery_Handler,
+		},
+		{
+			MethodName: "ListImages",
+			Handler:    _OrbitalImagerPlugin_ListImages_Handler,
+		},
+		{
+			MethodName: "GetImageMetadata",
+			Handler:    _OrbitalImagerPlugin_GetImageMetadata_Handler,
+		},
+		{
+			MethodName: "GetImagePacket",
+			Handler:    _OrbitalImagerPlugin_GetImagePacket_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

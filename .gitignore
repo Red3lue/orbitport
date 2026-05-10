@@ -41,3 +41,7 @@ debug/
 target/
 
 .orbitalimager-demo/
+
+# Bind-mounted output of the orbitalimager fragmenter
+# (plugin-orbitalimager service in dev.docker-compose.yaml).
+.orbitalimager-state/

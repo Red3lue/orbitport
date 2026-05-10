@@ -173,6 +173,545 @@ func (x *ImageryResult) GetMocked() bool {
 	return false
 }
 
+type ListImagesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListImagesRequest) Reset() {
+	*x = ListImagesRequest{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListImagesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListImagesRequest) ProtoMessage() {}
+
+func (x *ListImagesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListImagesRequest.ProtoReflect.Descriptor instead.
+func (*ListImagesRequest) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{2}
+}
+
+type ListImagesResult struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// image_id values, sorted lexicographically. Each id can be passed to
+	// GetImageMetadata or GetImagePacket. Empty if no images are fragmented.
+	ImageIds      []string `protobuf:"bytes,1,rep,name=image_ids,json=imageIds,proto3" json:"image_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListImagesResult) Reset() {
+	*x = ListImagesResult{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListImagesResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListImagesResult) ProtoMessage() {}
+
+func (x *ListImagesResult) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListImagesResult.ProtoReflect.Descriptor instead.
+func (*ListImagesResult) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListImagesResult) GetImageIds() []string {
+	if x != nil {
+		return x.ImageIds
+	}
+	return nil
+}
+
+type GetImageMetadataRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImageMetadataRequest) Reset() {
+	*x = GetImageMetadataRequest{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImageMetadataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImageMetadataRequest) ProtoMessage() {}
+
+func (x *GetImageMetadataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImageMetadataRequest.ProtoReflect.Descriptor instead.
+func (*GetImageMetadataRequest) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetImageMetadataRequest) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+// PacketInfo describes one tile produced by the fragmenter. Mirrors the
+// per-packet entries in metadata.json on disk.
+type PacketInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Index         uint32                 `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	Filename      string                 `protobuf:"bytes,2,opt,name=filename,proto3" json:"filename,omitempty"`
+	Row           uint32                 `protobuf:"varint,3,opt,name=row,proto3" json:"row,omitempty"`
+	Col           uint32                 `protobuf:"varint,4,opt,name=col,proto3" json:"col,omitempty"`
+	Width         uint32                 `protobuf:"varint,5,opt,name=width,proto3" json:"width,omitempty"`
+	Height        uint32                 `protobuf:"varint,6,opt,name=height,proto3" json:"height,omitempty"`
+	PacketHash    []byte                 `protobuf:"bytes,7,opt,name=packet_hash,json=packetHash,proto3" json:"packet_hash,omitempty"` // keccak256 of the packet file bytes
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PacketInfo) Reset() {
+	*x = PacketInfo{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PacketInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PacketInfo) ProtoMessage() {}
+
+func (x *PacketInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PacketInfo.ProtoReflect.Descriptor instead.
+func (*PacketInfo) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PacketInfo) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *PacketInfo) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *PacketInfo) GetRow() uint32 {
+	if x != nil {
+		return x.Row
+	}
+	return 0
+}
+
+func (x *PacketInfo) GetCol() uint32 {
+	if x != nil {
+		return x.Col
+	}
+	return 0
+}
+
+func (x *PacketInfo) GetWidth() uint32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *PacketInfo) GetHeight() uint32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *PacketInfo) GetPacketHash() []byte {
+	if x != nil {
+		return x.PacketHash
+	}
+	return nil
+}
+
+// ImageMetadata is the typed mirror of metadata.json. Field semantics are
+// 1:1 with the on-disk schema; hex hashes on disk become raw 32-byte
+// `bytes` here so typed clients don't have to hex-decode.
+type ImageMetadata struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Version         string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	ImageId         string                 `protobuf:"bytes,2,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	ShipName        string                 `protobuf:"bytes,3,opt,name=ship_name,json=shipName,proto3" json:"ship_name,omitempty"`
+	Imo             uint64                 `protobuf:"varint,4,opt,name=imo,proto3" json:"imo,omitempty"`
+	SourceFilename  string                 `protobuf:"bytes,5,opt,name=source_filename,json=sourceFilename,proto3" json:"source_filename,omitempty"`
+	SourceMimeType  string                 `protobuf:"bytes,6,opt,name=source_mime_type,json=sourceMimeType,proto3" json:"source_mime_type,omitempty"`
+	SourceExtension string                 `protobuf:"bytes,7,opt,name=source_extension,json=sourceExtension,proto3" json:"source_extension,omitempty"`
+	ImageWidth      uint32                 `protobuf:"varint,8,opt,name=image_width,json=imageWidth,proto3" json:"image_width,omitempty"`
+	ImageHeight     uint32                 `protobuf:"varint,9,opt,name=image_height,json=imageHeight,proto3" json:"image_height,omitempty"`
+	TilePixelSize   uint32                 `protobuf:"varint,10,opt,name=tile_pixel_size,json=tilePixelSize,proto3" json:"tile_pixel_size,omitempty"`
+	TileRows        uint32                 `protobuf:"varint,11,opt,name=tile_rows,json=tileRows,proto3" json:"tile_rows,omitempty"`
+	TileCols        uint32                 `protobuf:"varint,12,opt,name=tile_cols,json=tileCols,proto3" json:"tile_cols,omitempty"`
+	PacketCount     uint32                 `protobuf:"varint,13,opt,name=packet_count,json=packetCount,proto3" json:"packet_count,omitempty"`
+	PacketExtension string                 `protobuf:"bytes,14,opt,name=packet_extension,json=packetExtension,proto3" json:"packet_extension,omitempty"`
+	FullImageHash   []byte                 `protobuf:"bytes,15,opt,name=full_image_hash,json=fullImageHash,proto3" json:"full_image_hash,omitempty"` // keccak256(source bytes)
+	CreatedAtUnix   int64                  `protobuf:"varint,16,opt,name=created_at_unix,json=createdAtUnix,proto3" json:"created_at_unix,omitempty"`
+	Sensor          string                 `protobuf:"bytes,17,opt,name=sensor,proto3" json:"sensor,omitempty"`
+	Packets         []*PacketInfo          `protobuf:"bytes,18,rep,name=packets,proto3" json:"packets,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ImageMetadata) Reset() {
+	*x = ImageMetadata{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageMetadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageMetadata) ProtoMessage() {}
+
+func (x *ImageMetadata) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageMetadata.ProtoReflect.Descriptor instead.
+func (*ImageMetadata) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ImageMetadata) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetShipName() string {
+	if x != nil {
+		return x.ShipName
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetImo() uint64 {
+	if x != nil {
+		return x.Imo
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetSourceFilename() string {
+	if x != nil {
+		return x.SourceFilename
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetSourceMimeType() string {
+	if x != nil {
+		return x.SourceMimeType
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetSourceExtension() string {
+	if x != nil {
+		return x.SourceExtension
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetImageWidth() uint32 {
+	if x != nil {
+		return x.ImageWidth
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetImageHeight() uint32 {
+	if x != nil {
+		return x.ImageHeight
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetTilePixelSize() uint32 {
+	if x != nil {
+		return x.TilePixelSize
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetTileRows() uint32 {
+	if x != nil {
+		return x.TileRows
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetTileCols() uint32 {
+	if x != nil {
+		return x.TileCols
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetPacketCount() uint32 {
+	if x != nil {
+		return x.PacketCount
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetPacketExtension() string {
+	if x != nil {
+		return x.PacketExtension
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetFullImageHash() []byte {
+	if x != nil {
+		return x.FullImageHash
+	}
+	return nil
+}
+
+func (x *ImageMetadata) GetCreatedAtUnix() int64 {
+	if x != nil {
+		return x.CreatedAtUnix
+	}
+	return 0
+}
+
+func (x *ImageMetadata) GetSensor() string {
+	if x != nil {
+		return x.Sensor
+	}
+	return ""
+}
+
+func (x *ImageMetadata) GetPackets() []*PacketInfo {
+	if x != nil {
+		return x.Packets
+	}
+	return nil
+}
+
+type GetImagePacketRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	PacketIndex   uint32                 `protobuf:"varint,2,opt,name=packet_index,json=packetIndex,proto3" json:"packet_index,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImagePacketRequest) Reset() {
+	*x = GetImagePacketRequest{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImagePacketRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImagePacketRequest) ProtoMessage() {}
+
+func (x *GetImagePacketRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImagePacketRequest.ProtoReflect.Descriptor instead.
+func (*GetImagePacketRequest) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetImagePacketRequest) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
+func (x *GetImagePacketRequest) GetPacketIndex() uint32 {
+	if x != nil {
+		return x.PacketIndex
+	}
+	return 0
+}
+
+type GetImagePacketResult struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PacketIndex   uint32                 `protobuf:"varint,1,opt,name=packet_index,json=packetIndex,proto3" json:"packet_index,omitempty"`
+	PacketB64     string                 `protobuf:"bytes,2,opt,name=packet_b64,json=packetB64,proto3" json:"packet_b64,omitempty"`    // base64-encoded packet file (same shape as ImageryResult.image_b64)
+	PacketHash    []byte                 `protobuf:"bytes,3,opt,name=packet_hash,json=packetHash,proto3" json:"packet_hash,omitempty"` // keccak256 of the decoded bytes
+	Width         uint32                 `protobuf:"varint,4,opt,name=width,proto3" json:"width,omitempty"`
+	Height        uint32                 `protobuf:"varint,5,opt,name=height,proto3" json:"height,omitempty"`
+	MimeType      string                 `protobuf:"bytes,6,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"` // "image/png" for v0.1.0
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImagePacketResult) Reset() {
+	*x = GetImagePacketResult{}
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImagePacketResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImagePacketResult) ProtoMessage() {}
+
+func (x *GetImagePacketResult) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_plugins_orbitalimager_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImagePacketResult.ProtoReflect.Descriptor instead.
+func (*GetImagePacketResult) Descriptor() ([]byte, []int) {
+	return file_proto_plugins_orbitalimager_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetImagePacketResult) GetPacketIndex() uint32 {
+	if x != nil {
+		return x.PacketIndex
+	}
+	return 0
+}
+
+func (x *GetImagePacketResult) GetPacketB64() string {
+	if x != nil {
+		return x.PacketB64
+	}
+	return ""
+}
+
+func (x *GetImagePacketResult) GetPacketHash() []byte {
+	if x != nil {
+		return x.PacketHash
+	}
+	return nil
+}
+
+func (x *GetImagePacketResult) GetWidth() uint32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *GetImagePacketResult) GetHeight() uint32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *GetImagePacketResult) GetMimeType() string {
+	if x != nil {
+		return x.MimeType
+	}
+	return ""
+}
+
 var File_proto_plugins_orbitalimager_proto protoreflect.FileDescriptor
 
 const file_proto_plugins_orbitalimager_proto_rawDesc = "" +
@@ -191,9 +730,61 @@ const file_proto_plugins_orbitalimager_proto_rawDesc = "" +
 	"\x06sensor\x18\x04 \x01(\tR\x06sensor\x12\x1d\n" +
 	"\n" +
 	"image_hash\x18\x05 \x01(\fR\timageHash\x12\x16\n" +
-	"\x06mocked\x18\x06 \x01(\bR\x06mocked2d\n" +
+	"\x06mocked\x18\x06 \x01(\bR\x06mocked\"\x13\n" +
+	"\x11ListImagesRequest\"/\n" +
+	"\x10ListImagesResult\x12\x1b\n" +
+	"\timage_ids\x18\x01 \x03(\tR\bimageIds\"4\n" +
+	"\x17GetImageMetadataRequest\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\"\xb1\x01\n" +
+	"\n" +
+	"PacketInfo\x12\x14\n" +
+	"\x05index\x18\x01 \x01(\rR\x05index\x12\x1a\n" +
+	"\bfilename\x18\x02 \x01(\tR\bfilename\x12\x10\n" +
+	"\x03row\x18\x03 \x01(\rR\x03row\x12\x10\n" +
+	"\x03col\x18\x04 \x01(\rR\x03col\x12\x14\n" +
+	"\x05width\x18\x05 \x01(\rR\x05width\x12\x16\n" +
+	"\x06height\x18\x06 \x01(\rR\x06height\x12\x1f\n" +
+	"\vpacket_hash\x18\a \x01(\fR\n" +
+	"packetHash\"\x82\x05\n" +
+	"\rImageMetadata\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12\x19\n" +
+	"\bimage_id\x18\x02 \x01(\tR\aimageId\x12\x1b\n" +
+	"\tship_name\x18\x03 \x01(\tR\bshipName\x12\x10\n" +
+	"\x03imo\x18\x04 \x01(\x04R\x03imo\x12'\n" +
+	"\x0fsource_filename\x18\x05 \x01(\tR\x0esourceFilename\x12(\n" +
+	"\x10source_mime_type\x18\x06 \x01(\tR\x0esourceMimeType\x12)\n" +
+	"\x10source_extension\x18\a \x01(\tR\x0fsourceExtension\x12\x1f\n" +
+	"\vimage_width\x18\b \x01(\rR\n" +
+	"imageWidth\x12!\n" +
+	"\fimage_height\x18\t \x01(\rR\vimageHeight\x12&\n" +
+	"\x0ftile_pixel_size\x18\n" +
+	" \x01(\rR\rtilePixelSize\x12\x1b\n" +
+	"\ttile_rows\x18\v \x01(\rR\btileRows\x12\x1b\n" +
+	"\ttile_cols\x18\f \x01(\rR\btileCols\x12!\n" +
+	"\fpacket_count\x18\r \x01(\rR\vpacketCount\x12)\n" +
+	"\x10packet_extension\x18\x0e \x01(\tR\x0fpacketExtension\x12&\n" +
+	"\x0ffull_image_hash\x18\x0f \x01(\fR\rfullImageHash\x12&\n" +
+	"\x0fcreated_at_unix\x18\x10 \x01(\x03R\rcreatedAtUnix\x12\x16\n" +
+	"\x06sensor\x18\x11 \x01(\tR\x06sensor\x123\n" +
+	"\apackets\x18\x12 \x03(\v2\x19.orbitalimager.PacketInfoR\apackets\"U\n" +
+	"\x15GetImagePacketRequest\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\x12!\n" +
+	"\fpacket_index\x18\x02 \x01(\rR\vpacketIndex\"\xc4\x01\n" +
+	"\x14GetImagePacketResult\x12!\n" +
+	"\fpacket_index\x18\x01 \x01(\rR\vpacketIndex\x12\x1d\n" +
+	"\n" +
+	"packet_b64\x18\x02 \x01(\tR\tpacketB64\x12\x1f\n" +
+	"\vpacket_hash\x18\x03 \x01(\fR\n" +
+	"packetHash\x12\x14\n" +
+	"\x05width\x18\x04 \x01(\rR\x05width\x12\x16\n" +
+	"\x06height\x18\x05 \x01(\rR\x06height\x12\x1b\n" +
+	"\tmime_type\x18\x06 \x01(\tR\bmimeType2\xec\x02\n" +
 	"\x13OrbitalImagerPlugin\x12M\n" +
-	"\x0eRequestImagery\x12\x1d.orbitalimager.ImageryRequest\x1a\x1c.orbitalimager.ImageryResultB5Z3github.com/spacecomputer-io/orbitport/plugins/protob\x06proto3"
+	"\x0eRequestImagery\x12\x1d.orbitalimager.ImageryRequest\x1a\x1c.orbitalimager.ImageryResult\x12O\n" +
+	"\n" +
+	"ListImages\x12 .orbitalimager.ListImagesRequest\x1a\x1f.orbitalimager.ListImagesResult\x12X\n" +
+	"\x10GetImageMetadata\x12&.orbitalimager.GetImageMetadataRequest\x1a\x1c.orbitalimager.ImageMetadata\x12[\n" +
+	"\x0eGetImagePacket\x12$.orbitalimager.GetImagePacketRequest\x1a#.orbitalimager.GetImagePacketResultB5Z3github.com/spacecomputer-io/orbitport/plugins/protob\x06proto3"
 
 var (
 	file_proto_plugins_orbitalimager_proto_rawDescOnce sync.Once
@@ -207,19 +798,33 @@ func file_proto_plugins_orbitalimager_proto_rawDescGZIP() []byte {
 	return file_proto_plugins_orbitalimager_proto_rawDescData
 }
 
-var file_proto_plugins_orbitalimager_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_plugins_orbitalimager_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_plugins_orbitalimager_proto_goTypes = []any{
-	(*ImageryRequest)(nil), // 0: orbitalimager.ImageryRequest
-	(*ImageryResult)(nil),  // 1: orbitalimager.ImageryResult
+	(*ImageryRequest)(nil),          // 0: orbitalimager.ImageryRequest
+	(*ImageryResult)(nil),           // 1: orbitalimager.ImageryResult
+	(*ListImagesRequest)(nil),       // 2: orbitalimager.ListImagesRequest
+	(*ListImagesResult)(nil),        // 3: orbitalimager.ListImagesResult
+	(*GetImageMetadataRequest)(nil), // 4: orbitalimager.GetImageMetadataRequest
+	(*PacketInfo)(nil),              // 5: orbitalimager.PacketInfo
+	(*ImageMetadata)(nil),           // 6: orbitalimager.ImageMetadata
+	(*GetImagePacketRequest)(nil),   // 7: orbitalimager.GetImagePacketRequest
+	(*GetImagePacketResult)(nil),    // 8: orbitalimager.GetImagePacketResult
 }
 var file_proto_plugins_orbitalimager_proto_depIdxs = []int32{
-	0, // 0: orbitalimager.OrbitalImagerPlugin.RequestImagery:input_type -> orbitalimager.ImageryRequest
-	1, // 1: orbitalimager.OrbitalImagerPlugin.RequestImagery:output_type -> orbitalimager.ImageryResult
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	5, // 0: orbitalimager.ImageMetadata.packets:type_name -> orbitalimager.PacketInfo
+	0, // 1: orbitalimager.OrbitalImagerPlugin.RequestImagery:input_type -> orbitalimager.ImageryRequest
+	2, // 2: orbitalimager.OrbitalImagerPlugin.ListImages:input_type -> orbitalimager.ListImagesRequest
+	4, // 3: orbitalimager.OrbitalImagerPlugin.GetImageMetadata:input_type -> orbitalimager.GetImageMetadataRequest
+	7, // 4: orbitalimager.OrbitalImagerPlugin.GetImagePacket:input_type -> orbitalimager.GetImagePacketRequest
+	1, // 5: orbitalimager.OrbitalImagerPlugin.RequestImagery:output_type -> orbitalimager.ImageryResult
+	3, // 6: orbitalimager.OrbitalImagerPlugin.ListImages:output_type -> orbitalimager.ListImagesResult
+	6, // 7: orbitalimager.OrbitalImagerPlugin.GetImageMetadata:output_type -> orbitalimager.ImageMetadata
+	8, // 8: orbitalimager.OrbitalImagerPlugin.GetImagePacket:output_type -> orbitalimager.GetImagePacketResult
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_plugins_orbitalimager_proto_init() }
@@ -233,7 +838,7 @@ func file_proto_plugins_orbitalimager_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_plugins_orbitalimager_proto_rawDesc), len(file_proto_plugins_orbitalimager_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
