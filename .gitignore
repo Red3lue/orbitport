@@ -39,3 +39,5 @@ plugins/bin/
 # will have compiled files and executables
 debug/
 target/
+
+.orbitalimager-demo/

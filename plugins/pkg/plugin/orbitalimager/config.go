@@ -14,17 +14,32 @@ type orbitalImagerConfig struct {
 	FixturePath string
 	// Sensor is a free-form identifier embedded in ImageryResult.sensor.
 	Sensor string
+
+	// FragmentOnLoad enables v0.1.0 fragmentation of the fixture image at
+	// NewPlugin() time. Set false to skip (boot stays fast, no disk writes).
+	FragmentOnLoad bool
+	// FragmentOutputDir is the parent directory for fragmented images. Each
+	// image gets a subdirectory containing metadata.json and packets/.
+	FragmentOutputDir string
+	// FragmentTilePixelSize is the side length of each square packet in pixels.
+	FragmentTilePixelSize int
 }
 
 func readFromEnv() *orbitalImagerConfig {
 	setDefaults()
 	return &orbitalImagerConfig{
-		FixturePath: viper.GetString("ORBITALIMAGER_FIXTURE_PATH"),
-		Sensor:      viper.GetString("ORBITALIMAGER_SENSOR"),
+		FixturePath:           viper.GetString("ORBITALIMAGER_FIXTURE_PATH"),
+		Sensor:                viper.GetString("ORBITALIMAGER_SENSOR"),
+		FragmentOnLoad:        viper.GetBool("ORBITALIMAGER_FRAGMENT_ON_LOAD"),
+		FragmentOutputDir:     viper.GetString("ORBITALIMAGER_FRAGMENT_OUTPUT_DIR"),
+		FragmentTilePixelSize: viper.GetInt("ORBITALIMAGER_FRAGMENT_TILE_PIXEL_SIZE"),
 	}
 }
 
 func setDefaults() {
 	viper.SetDefault("ORBITALIMAGER_FIXTURE_PATH", "")
 	viper.SetDefault("ORBITALIMAGER_SENSOR", "phare-mock-1")
+	viper.SetDefault("ORBITALIMAGER_FRAGMENT_ON_LOAD", true)
+	viper.SetDefault("ORBITALIMAGER_FRAGMENT_OUTPUT_DIR", "/var/cache/orbitalimager/images")
+	viper.SetDefault("ORBITALIMAGER_FRAGMENT_TILE_PIXEL_SIZE", 256)
 }

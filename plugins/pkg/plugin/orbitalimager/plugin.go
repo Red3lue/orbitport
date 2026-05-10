@@ -36,6 +36,11 @@ type Plugin struct {
 
 // NewPlugin creates a new orbitalimager plugin instance and pre-loads the
 // fixture image so RequestImagery is a memory read at request time.
+//
+// When the fixture's extension is in SupportedExtensions and
+// FragmentOnLoad is true, the plugin also fragments the fixture into
+// fixed-size packets on disk. Fragmentation failure is logged but does
+// not block boot — RequestImagery (v1) does not depend on it.
 func NewPlugin() (*Plugin, error) {
 	logger := utils.GetLogger("orbitport:orbitalimager")
 	cfg := readFromEnv()
@@ -48,12 +53,43 @@ func NewPlugin() (*Plugin, error) {
 
 	hash := keccak256(imgBytes)
 
+	if cfg.FragmentOnLoad {
+		fragmentFixture(logger, cfg, source, imgBytes, mime)
+	}
+
 	return &Plugin{
 		imageBytes: imgBytes,
 		mimeType:   mime,
 		imageHash:  hash,
 		sensor:     cfg.Sensor,
 	}, nil
+}
+
+// fragmentFixture runs the v0.1.0 fragmenter on the loaded fixture if the
+// source has a supported extension. Logs progress + failures; never returns
+// an error so a broken fragment never blocks the plugin from serving v1
+// RequestImagery responses.
+func fragmentFixture(log *utils.Logger, cfg *orbitalImagerConfig, source string, imgBytes []byte, mime string) {
+	if !IsSupportedExtension(source) {
+		log.Infof("Fragmenter: source %q has unsupported extension; allowed=%v — skipping",
+			source, SupportedExtensions)
+		return
+	}
+	res, err := FragmentImage(FragmentOptions{
+		SourceBytes:    imgBytes,
+		SourceFilename: source,
+		SourceMimeType: mime,
+		OutputDir:      cfg.FragmentOutputDir,
+		TilePixelSize:  cfg.FragmentTilePixelSize,
+		Sensor:         cfg.Sensor,
+	})
+	if err != nil {
+		log.Warnf("Fragmenter: failed for %s: %v", source, err)
+		return
+	}
+	log.Infof("Fragmenter: %s → %s (%d packets, %dx%d, tile=%d)",
+		source, res.ImageDir, res.Metadata.PacketCount,
+		res.Metadata.ImageWidth, res.Metadata.ImageHeight, res.Metadata.TilePixelSize)
 }
 
 // RequestImagery returns the configured fixture image as base64.
